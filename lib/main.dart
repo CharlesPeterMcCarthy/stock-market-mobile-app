@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'constants/screen-titles.dart';
 import 'navigation.dart';
 
 void main() {
@@ -10,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Stock Trading',
+      title: ScreenTitles.HOME_SCREEN,
       theme: ThemeData(
         primarySwatch: Colors.deepPurple,
         accentColor: Colors.blue,
