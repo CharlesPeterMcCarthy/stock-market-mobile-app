@@ -14,7 +14,10 @@ class MyApp extends StatelessWidget {
         accentColor: Colors.blue,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-          home: MyHomePage(title: 'Stock Trading'),
+      routes: <String, WidgetBuilder> {
+        '/': (BuildContext context) => MyHomePage(title: 'Stock Trading'),
+        '/watchlist': (BuildContext context) => MyHomePage(title: 'My Watchlist')
+      },
     );
   }
 }
@@ -35,6 +38,8 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _counter++;
     });
+
+    Navigator.pushNamed(context, '/watchlist');
   }
 
   @override
