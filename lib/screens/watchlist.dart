@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:stock_trading/components/watchlist.dart';
 import 'package:stock_trading/model/stock.dart';
@@ -19,6 +21,19 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   TextEditingController _controller = TextEditingController();
 
   @override
+  void initState() {
+    super.initState();
+
+    widget.channel.stream.listen((onData){
+      debugPrint("INIT REVIEve");
+      debugPrint(onData);
+      Map<String, dynamic> data = jsonDecode(onData);
+      print(data);
+      _sortSubscriptionSnapshot(data);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -37,13 +52,14 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
                 decoration: InputDecoration(labelText: 'Stock Ticker'),
               ),
             ),
-            StreamBuilder(
-              stream: widget.channel.stream,
-              builder: (context, snapshot) {
-                debugPrint(snapshot.toString());
-                return Text(snapshot.data == null ? 'Waiting..' : snapshot.data);
-              },
-            )
+//            StreamBuilder(
+//              stream: widget.channel.stream,
+//              builder: (context, snapshot) {
+//                debugPrint(snapshot.toString());
+////                _updateStockPrice();
+//                return Text('');
+//              },
+//            )
           ],
         ),
       ),
@@ -107,5 +123,34 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
     );
   }
 
+  void _sortSubscriptionSnapshot(Map snapshotData) {
+//    debugPrint(snapshot.toString());
+
+//    if (snapshot.hasData) {
+//      Map<String, dynamic> snapshotData = jsonDecode(snapshot.data);
+      final String type = snapshotData['type'];
+
+      if (type == 'trade' && snapshotData.containsKey('data')) {
+        dynamic data = snapshotData['data'];
+        double price = data[0]['p'].toDouble();
+        String symbol = data[0]['s'];
+
+        final stock = widget.subscribedStocks.firstWhere((s) => s.symbol == symbol);
+
+        setState(() {
+          stock.price = price;
+        });
+      }
+//    }
+  }
+
+  Future<void> _updateStockPrice() async {
+    if (widget.subscribedStocks.length == 0) return;
+    () async {
+      setState(() {
+        widget.subscribedStocks[0].price = 1.5;
+      });
+    }();
+  }
 
 }
