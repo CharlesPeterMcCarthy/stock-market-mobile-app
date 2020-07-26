@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:stock_trading/model/stock.dart';
 
 class Watchlist extends StatefulWidget {
-  Watchlist({ this.subscribedStocks });
+  Watchlist({ this.subscribedStocks, this.symbolUnsubscribe });
 
   final List<Stock> subscribedStocks;
+  final UnsubscribeCallback symbolUnsubscribe;
 
   @override
   _WatchlistState createState() => _WatchlistState();
@@ -23,16 +24,49 @@ class _WatchlistState extends State<Watchlist> {
         itemBuilder: (BuildContext context, int index) {
           final Stock stock = widget.subscribedStocks[index];
 
-          return Container(
+          return InkWell(
+            child: Container(
             padding: EdgeInsets.all(10),
             color: stock.trendColor,
             child: Center(
-                child: Column(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text(stock.symbol),
-                    Text(stock.currentPrice.toStringAsFixed(2)),
+                    Container(
+                      child: Text(
+                        stock.symbol,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16
+                        ),
+                      ),
+                    ),
+                    Text(
+                      stock.currentPrice.toStringAsFixed(2),
+                      style: TextStyle(
+                        fontSize: 16
+                      ),
+                    ),
+                    CircleAvatar(
+//                      decoration: ShapeDecoration(
+//                        color: Color(0xff222222),
+//                        shape: CircleBorder()
+//                      ),
+                      radius: 14,
+                      backgroundColor: Color(0xff333333),
+                      child: IconButton(
+                        iconSize: 12,
+                        icon: Icon(
+                            Icons.close,
+                            color: Colors.white
+                        ),
+                        onPressed: () => _removeStockSubscription(stock.symbol),
+                      ),
+                    ),
                   ],
-                )
+                ),
+              ),
             ),
           );
         },
@@ -42,4 +76,13 @@ class _WatchlistState extends State<Watchlist> {
       ),
     );
 
+
+  void _removeStockSubscription(String symbol) {
+    widget.symbolUnsubscribe(symbol);
+
+    setState(() => widget.subscribedStocks.removeWhere((s) => s.symbol == symbol));
+  }
+
 }
+
+typedef UnsubscribeCallback = void Function(String symbol);

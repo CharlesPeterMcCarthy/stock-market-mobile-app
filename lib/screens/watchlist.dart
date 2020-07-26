@@ -41,11 +41,14 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Watchlist(subscribedStocks: widget.subscribedStocks),
+            Watchlist(
+                subscribedStocks: widget.subscribedStocks,
+                symbolUnsubscribe: _symbolUnsubscribe
+            ),
             Form(
               child: TextFormField(
                 controller: _controller,
-                decoration: InputDecoration(labelText: 'Stock Ticker'),
+                decoration: InputDecoration(labelText: 'Stock Symbol'),
               ),
             ),
           ],
@@ -61,7 +64,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
 
   @override
   void dispose() {
-    debugPrint('Closing subscriptions');
+    print('Closing subscriptions');
 
     widget.channel.sink.close();
     super.dispose();
@@ -76,7 +79,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
       return;
     }
 
-    debugPrint('Subscribing to $symbol');
+    print('Subscribing to $symbol');
 
     if (symbol.isNotEmpty) {
       widget.channel.sink.add('{"type": "subscribe", "symbol": "$symbol"}');
@@ -86,12 +89,17 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
     }
   }
 
+  void _symbolUnsubscribe(String symbol) {
+    print('Unsubscribing from $symbol');
+    widget.channel.sink.add('{"type": "unsubscribe", "symbol": "$symbol"}');
+  }
+
   bool _checkSymbolAlreadySubscribed(String symbol) {
     return widget.subscribedStocks.indexWhere((s) => s.symbol == symbol) >= 0;
   }
 
   void _showAlreadySubscribedDialog(String symbol) {
-    debugPrint('Already subscribed to $symbol');
+    print('Already subscribed to $symbol');
 
     showDialog(
       context: context,
@@ -120,13 +128,13 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
       double price = data[0]['p'].toDouble();
       String symbol = data[0]['s'];
 
-      updateStockPrice(symbol, price);
+      _updateStockPrice(symbol, price);
     }
   }
 
-  void updateStockPrice(String symbol, double price) {
-    final stock = widget.subscribedStocks.firstWhere((s) => s.symbol == symbol);
-    setState(() => stock.setPrice(price));
+  void _updateStockPrice(String symbol, double price) {
+    final stock = widget.subscribedStocks.firstWhere((s) => s.symbol == symbol, orElse: null);
+    if (stock != null) setState(() => stock.setPrice(price));
   }
 
 }
