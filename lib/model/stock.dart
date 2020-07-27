@@ -8,10 +8,7 @@ class Stock {
   double previousPrice = 0;
   Color trendColor = Colors.white;
 
-  Stock(String symbol, double price) {
-    this.symbol = symbol;
-    this.currentPrice = price;
-  }
+  Stock(this.symbol, this.currentPrice);
 
   void setPrice(double price) {
     previousPrice = currentPrice;
@@ -20,9 +17,6 @@ class Stock {
   }
 
   Color setStockTrendColor() {
-    print("PRICES");
-    print(currentPrice);
-    print(previousPrice);
     if (currentPrice < previousPrice) return trendColor = Colors.red;
     if (currentPrice > previousPrice) return trendColor = Colors.green;
     return trendColor;
