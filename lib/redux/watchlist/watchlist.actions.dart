@@ -21,3 +21,10 @@ class RemoveStockSubscription {
 
   RemoveStockSubscription(this.symbol);
 }
+
+class UpdateStockPrice {
+  final String symbol;
+  final double price;
+
+  UpdateStockPrice({ this.symbol, this.price });
+}

@@ -11,6 +11,8 @@ WatchlistState watchListReducer(WatchlistState prevState, dynamic action) {
     newState.subscribedStocks = addStockSub(prevState.subscribedStocks, action);
   } else if (action is RemoveStockSubscription) {
     newState.subscribedStocks = removeStockSub(prevState.subscribedStocks, action);
+  } else if (action is UpdateStockPrice) {
+    newState.subscribedStocks = updateStockPrice(prevState.subscribedStocks, action);
   }
 
   return newState;
@@ -19,6 +21,8 @@ WatchlistState watchListReducer(WatchlistState prevState, dynamic action) {
 List<Stock> addStockSub(List<Stock> currentSubs, AddStockSubscription action) => List.from(currentSubs)..add(action.stock);
 
 List<Stock> removeStockSub(List<Stock> currentSubs, RemoveStockSubscription action) => List.from(currentSubs)..removeWhere((s) => s.symbol == action.symbol);
+
+List<Stock> updateStockPrice(List<Stock> currentSubs, UpdateStockPrice action) => List.from(currentSubs)..firstWhere((s) => s.symbol == action.symbol, orElse: null).setPrice(action.price);
 
 //Reducer<List<String>> watchListReducer = combineReducers<List<String>>([
 ////  new TypedReducer<List<String>, FontSize>(addItemReducer),

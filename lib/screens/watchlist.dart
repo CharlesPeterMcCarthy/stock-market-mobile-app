@@ -9,12 +9,14 @@ import 'package:stock_trading/redux/watchlist/watchlist.state.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../store.dart';
+
 class WatchlistScreen extends StatefulWidget {
-  WatchlistScreen({Key key, this.title}) : super(key: key);
+  WatchlistScreen({ Key key, this.title }) : super(key: key);
 
   final String title;
-  List<Stock> subscribedStocks = [];
   final WebSocketChannel channel = IOWebSocketChannel.connect('wss://ws.finnhub.io?token=bs9btlfrh5rahoaofigg');
+  final state = store.state;
 
   @override
   _WatchlistScreenState createState() => _WatchlistScreenState();
@@ -27,8 +29,8 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   void initState() {
     super.initState();
 
-    widget.channel.stream.listen((onData){
-      Map<String, dynamic> data = jsonDecode(onData);
+    widget.channel.stream.listen((received) {
+      Map<String, dynamic> data = jsonDecode(received);
       _sortSubscriptionData(data);
     });
   }
@@ -64,7 +66,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _symbolSubscribe,
-        tooltip: 'Subscribe to Ticker',
+        tooltip: 'Subscribe to Symbol',
         child: Icon(Icons.send),
       ),
     );
@@ -103,7 +105,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   }
 
   bool _checkSymbolAlreadySubscribed(String symbol) {
-    return widget.subscribedStocks.indexWhere((s) => s.symbol == symbol) >= 0;
+    return widget.state.subscribedStocks.indexWhere((s) => s.symbol == symbol) >= 0;
   }
 
   void _showAlreadySubscribedDialog(String symbol) {
@@ -141,8 +143,12 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
   }
 
   void _updateStockPrice(String symbol, double price) {
-    final stock = widget.subscribedStocks.firstWhere((s) => s.symbol == symbol, orElse: null);
-    if (stock != null) setState(() => stock.setPrice(price));
+    StoreProvider.of<WatchlistState>(context).dispatch(
+        UpdateStockPrice(
+          symbol: symbol,
+          price: price
+        )
+    );
   }
 
 }
