@@ -1,17 +1,24 @@
+import 'package:stock_trading/model/stock.dart';
 import 'package:stock_trading/redux/watchlist/watchlist.state.dart';
 import 'package:stock_trading/redux/watchlist/watchlist.actions.dart';
 
 WatchlistState watchListReducer(WatchlistState prevState, dynamic action) {
   WatchlistState newState = WatchlistState.fromAppState(prevState);
-  if (action is FontSize) {
-    newState.sliderFontSize = action.payload;
-  } else if (action is Bold) {
-    newState.bold = action.payload;
-  } else if (action is Italic) {
-    newState.italic = action.payload;
+
+  if (action is StockSubscriptions) {
+    newState.subscribedStocks = action.subscribedStocks;
+  } else if (action is AddStockSubscription) {
+    newState.subscribedStocks = addStockSub(prevState.subscribedStocks, action);
+  } else if (action is RemoveStockSubscription) {
+    newState.subscribedStocks = removeStockSub(prevState.subscribedStocks, action);
   }
+
   return newState;
 }
+
+List<Stock> addStockSub(List<Stock> currentSubs, AddStockSubscription action) => List.from(currentSubs)..add(action.stock);
+
+List<Stock> removeStockSub(List<Stock> currentSubs, RemoveStockSubscription action) => List.from(currentSubs)..removeWhere((s) => s.symbol == action.symbol);
 
 //Reducer<List<String>> watchListReducer = combineReducers<List<String>>([
 ////  new TypedReducer<List<String>, FontSize>(addItemReducer),

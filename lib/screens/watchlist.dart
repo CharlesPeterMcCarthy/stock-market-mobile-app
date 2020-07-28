@@ -1,8 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:stock_trading/components/watchlist.dart';
 import 'package:stock_trading/model/stock.dart';
+import 'package:stock_trading/redux/watchlist/watchlist.actions.dart';
+import 'package:stock_trading/redux/watchlist/watchlist.state.dart';
 import 'package:web_socket_channel/io.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -36,23 +39,28 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Watchlist(
-                subscribedStocks: widget.subscribedStocks,
-                symbolUnsubscribe: _symbolUnsubscribe
+      body: StoreConnector<WatchlistState, WatchlistState>(
+        converter: (store) => store.state,
+        builder: (context, state) {
+          return Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Watchlist(
+                    subscribedStocks: state.subscribedStocks,
+                    symbolUnsubscribe: _symbolUnsubscribe
+                ),
+                Form(
+                  child: TextFormField(
+                    controller: _controller,
+                    decoration: InputDecoration(labelText: 'Stock Symbol'),
+                  ),
+                ),
+              ],
             ),
-            Form(
-              child: TextFormField(
-                controller: _controller,
-                decoration: InputDecoration(labelText: 'Stock Symbol'),
-              ),
-            ),
-          ],
-        ),
+          );
+        }
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _symbolSubscribe,
@@ -85,7 +93,7 @@ class _WatchlistScreenState extends State<WatchlistScreen> {
       widget.channel.sink.add('{"type": "subscribe", "symbol": "$symbol"}');
 
       final stock = Stock(symbol, 0);
-      setState(() => widget.subscribedStocks.add(stock));
+      StoreProvider.of<WatchlistState>(context).dispatch(AddStockSubscription(stock));
     }
   }
 

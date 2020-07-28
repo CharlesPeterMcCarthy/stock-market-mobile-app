@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_redux/flutter_redux.dart';
 import 'package:stock_trading/model/stock.dart';
+import 'package:stock_trading/redux/watchlist/watchlist.actions.dart';
+import 'package:stock_trading/redux/watchlist/watchlist.state.dart';
 
 class Watchlist extends StatefulWidget {
   Watchlist({ this.subscribedStocks, this.symbolUnsubscribe });
@@ -80,7 +83,8 @@ class _WatchlistState extends State<Watchlist> {
   void _removeStockSubscription(String symbol) {
     widget.symbolUnsubscribe(symbol);
 
-    setState(() => widget.subscribedStocks.removeWhere((s) => s.symbol == symbol));
+//    setState(() => widget.subscribedStocks.removeWhere((s) => s.symbol == symbol));
+    StoreProvider.of<WatchlistState>(context).dispatch(RemoveStockSubscription(symbol));
   }
 
 }

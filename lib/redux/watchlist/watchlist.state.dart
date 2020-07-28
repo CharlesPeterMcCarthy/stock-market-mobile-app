@@ -1,17 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:stock_trading/model/stock.dart';
 
 class WatchlistState {
-  double sliderFontSize;
-  bool bold;
-  bool italic;
+  List<Stock> subscribedStocks;
 
-  WatchlistState({@required this.sliderFontSize, this.bold = false, this.italic = false});
+  WatchlistState({this.subscribedStocks = const []});
 
   WatchlistState.fromAppState(WatchlistState another) {
-    sliderFontSize = another.sliderFontSize;
-    bold = another.bold;
-    italic = another.italic;
+    subscribedStocks = another.subscribedStocks;
   }
-
-  double get viewFontSize => sliderFontSize * 30;
 }

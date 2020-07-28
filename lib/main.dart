@@ -11,7 +11,7 @@ import 'package:redux/redux.dart';
 //];
 
 void main() {
-  final _initialState = WatchlistState(sliderFontSize: 0.5);
+  final _initialState = WatchlistState();
   final Store<WatchlistState> _store = Store<WatchlistState>(watchListReducer, initialState: _initialState);
 
   runApp(TradingApp(store: _store));
@@ -24,7 +24,7 @@ class TradingApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StoreProvider(
+    return StoreProvider<WatchlistState>(
       store: store,
       child: MaterialApp(
         title: ScreenTitles.HOME_SCREEN,

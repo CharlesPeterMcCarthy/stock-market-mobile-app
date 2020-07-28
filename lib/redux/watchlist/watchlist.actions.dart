@@ -1,12 +1,23 @@
-class FontSize {
-  final double payload;
-  FontSize(this.payload);
+import 'package:stock_trading/model/stock.dart';
+
+class StockSubscriptions {
+  final List<Stock> subscribedStocks;
+
+  StockSubscriptions(this.subscribedStocks);
+
+//  AddSubscription(Stock stock) {
+//    subscribedStocks.add(stock);
+//  }
 }
-class Bold {
-  final bool payload;
-  Bold(this.payload);
+
+class AddStockSubscription {
+  final Stock stock;
+
+  AddStockSubscription(this.stock);
 }
-class Italic {
-  final bool payload;
-  Italic(this.payload);
+
+class RemoveStockSubscription {
+  final String symbol;
+
+  RemoveStockSubscription(this.symbol);
 }
