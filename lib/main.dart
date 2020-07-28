@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
-import 'package:stock_trading/redux/watchlist/watchlist.reducers.dart';
 import 'package:stock_trading/redux/watchlist/watchlist.state.dart';
+import 'package:stock_trading/store.dart';
 import 'constants/screen-titles.dart';
 import 'navigation.dart';
 import 'package:redux/redux.dart';
@@ -11,10 +11,7 @@ import 'package:redux/redux.dart';
 //];
 
 void main() {
-  final _initialState = WatchlistState();
-  final Store<WatchlistState> _store = Store<WatchlistState>(watchListReducer, initialState: _initialState);
-
-  runApp(TradingApp(store: _store));
+  runApp(TradingApp(store: store));
 }
 
 class TradingApp extends StatelessWidget {
